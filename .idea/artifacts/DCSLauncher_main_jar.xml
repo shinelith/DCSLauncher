@@ -1,0 +1,18 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="DCSLauncher.main:jar">
+    <output-path>D:/DCS World2</output-path>
+    <properties id="ant-postprocessing">
+      <options enabled="true" />
+    </properties>
+    <root id="archive" name="DCSLauncher.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="DCSLauncher.main" />
+      <element id="extracted-dir" path="$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.formdev/flatlaf/0.30/1ebd625c1844170cebc7bcf02856e5e2dd396070/flatlaf-0.30.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/libs/luaj-jse-3.0.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/ini4j/ini4j/0.5.4/ini4j-0.5.4.jar" path-in-jar="/" />
+      <element id="dir-copy" path="$PROJECT_DIR$/src/main/resources" />
+    </root>
+  </artifact>
+</component>
