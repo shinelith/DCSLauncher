@@ -365,7 +365,8 @@ public class MainForm {
                     String exeName = exe.getName();
                     if (watchDog.isRunning(exeName) == false) {
                         try {
-                            Runtime.getRuntime().exec("cmd /c \"" + addonPath + "\"");
+                            Runtime runtime = Runtime.getRuntime();
+                            runtime.exec("cmd /c \"" + addonPath + "\"", null, exe.getParentFile());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
