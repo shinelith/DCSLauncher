@@ -29,8 +29,8 @@ public class MainForm {
     private Thread watchDogThread;
     private JFrame frame;
     private JPanel panel;
-    private JButton btn_start_dcs;
-    private JButton btn_update;
+    private JButton btnStartDCS;
+    private JButton btnUpdate;
     private JTabbedPane tabbedPane1;
     private JComboBox selectMonitorSetup;
     private JComboBox selectResolution;
@@ -45,6 +45,10 @@ public class MainForm {
     private JButton btnDCSSavedPathSelect;
     private JButton btnDCSRepair;
     private JButton btnDCSUpdateSite;
+    private JTextField tfUpdateArgs;
+    private JButton btnUpdateWithArgs;
+    private JButton btnDCSHistory;
+    private JTextArea DCS_UpdaterExeUpdateVersionTextArea;
     private HashMap<String, String> options;
     private LuaValue luaOptions;
     private Wini cfg;
@@ -245,8 +249,15 @@ public class MainForm {
             } catch (IOException e) {
             }
         });
+        // dcs历史版本
+        btnDCSHistory.addActionListener(actionEvent-> {
+            try {
+                Desktop.getDesktop().browse(URI.create("https://www.digitalcombatsimulator.com/en/news/changelog/openbeta/"));
+            } catch (IOException e) {
+            }
+        });
         // dcs 启动
-        btn_start_dcs.addActionListener(actionEvent -> {
+        btnStartDCS.addActionListener(actionEvent -> {
             boolean saveSuccess = saveDCSOptionsLua();
             if (saveSuccess) {
                 run_addon();
@@ -255,12 +266,19 @@ public class MainForm {
             }
         });
         // dcs 更新
-        btn_update.addActionListener(actionEvent -> {
+        btnUpdate.addActionListener(actionEvent -> {
             run_dcs_update(DCS_UPDATE_UPDATE);
         });
         // dcs 修复
         btnDCSRepair.addActionListener(actionEvent -> {
             run_dcs_update(DCS_UPDATE_REPAIR);
+        });
+        // dcs 更新带指定参数
+        btnUpdateWithArgs.addActionListener(actionEvent -> {
+            String arg = tfUpdateArgs.getText();
+            if(arg != null || !"".equals(arg)){
+                run_dcs_update(arg);
+            }
         });
     }
 
