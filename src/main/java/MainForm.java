@@ -48,7 +48,7 @@ public class MainForm {
     private JTextField tfUpdateArgs;
     private JButton btnUpdateWithArgs;
     private JButton btnDCSHistory;
-    private JTextArea DCS_UpdaterExeUpdateVersionTextArea;
+    private JTextArea taDesc;
     private HashMap<String, String> options;
     private LuaValue luaOptions;
     private Wini cfg;
