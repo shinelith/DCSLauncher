@@ -405,13 +405,16 @@ public class MainForm {
     private void run_dcs() {
         String dcsPath = getPathDcs();
         if (dcsPath != null) {
-            String dcsExe = dcsPath + "/bin/dcs.exe";
+            String dcsExeName = "dcs.exe";
+            String dcsExe = dcsPath + "/bin/" + dcsExeName;
             File f = new File(dcsExe);
             if (f.exists()) {
-                try {
-                    Runtime.getRuntime().exec("cmd /c \"" + dcsExe + "\"");
-                } catch (IOException e) {
-                    e.printStackTrace();
+                if (watchDog.isRunning(dcsExeName) == false) {
+                    try {
+                        Runtime.getRuntime().exec("cmd /c \"" + dcsExe + "\"");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             } else {
                 JOptionPane.showMessageDialog(null, "未找到DCS主程序");
