@@ -50,4 +50,4 @@ out/production/resources/META-INF/MANIFEST.MF
 gradle/wrapper/gradle-wrapper.jar
 gradle/wrapper/gradle-wrapper.properties
 DCSLauncher.ini
-/.idea/vcs.xml
+/.idea
