@@ -1,4 +1,10 @@
 import com.formdev.flatlaf.FlatDarkLaf;
+import com.sun.jna.Memory;
+import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.VerRsrc.VS_FIXEDFILEINFO;
+import com.sun.jna.ptr.IntByReference;
+import com.sun.jna.ptr.PointerByReference;
+import com.sun.jna.platform.win32.Version;
 import org.ini4j.Wini;
 import org.luaj.vm2.Globals;
 import org.luaj.vm2.LuaValue;
@@ -10,7 +16,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -52,6 +60,8 @@ public class MainForm {
     private HashMap<String, String> options;
     private LuaValue luaOptions;
     private Wini cfg;
+
+    private String dcsVersionCode;
 
     public void loadDcsMultiMonitorSetup() {
         for (ActionListener listener : selectMonitorSetup.getActionListeners()) {
@@ -148,6 +158,44 @@ public class MainForm {
         }
     }
 
+    private void loadDcsVersionCode() throws Exception{
+        String dcsPath = getPathDcs();
+        if (dcsPath != null) {
+            String dcsExeName = "dcs.exe";
+            String dcsExe = dcsPath + "/bin/" + dcsExeName;
+            File f = new File(dcsExe);
+            if (f.exists()) {
+
+                IntByReference dwDummy = new IntByReference();
+                dwDummy.setValue(0);
+
+                int versionlength = Version.INSTANCE.GetFileVersionInfoSize(dcsExe, dwDummy);
+                byte[] bufferarray = new byte[versionlength];
+                Pointer lpData = new Memory(bufferarray.length);
+                PointerByReference lplpBuffer = new PointerByReference();
+                IntByReference puLen = new IntByReference();
+
+                boolean fileInfoResult =
+                        com.sun.jna.platform.win32.Version.INSTANCE.GetFileVersionInfo(
+                                dcsExe, 0, versionlength, lpData);
+
+                boolean verQueryVal =
+                        com.sun.jna.platform.win32.Version.INSTANCE.VerQueryValue(
+                                lpData, "\\", lplpBuffer, puLen);
+
+                VS_FIXEDFILEINFO lplpBufStructure = new VS_FIXEDFILEINFO(lplpBuffer.getValue());
+                lplpBufStructure.read();
+
+                int v1 = (lplpBufStructure.dwFileVersionMS).intValue() >> 16;
+                int v2 = (lplpBufStructure.dwFileVersionMS).intValue() & 0xffff;
+                int v3 = (lplpBufStructure.dwFileVersionLS).intValue() >> 16;
+                int v4 = (lplpBufStructure.dwFileVersionLS).intValue() & 0xffff;
+
+                this.dcsVersionCode =  String.valueOf(v1) + "." + String.valueOf(v2) + "." + String.valueOf(v3) + "." + String.valueOf(v4);
+            }
+        }
+    }
+
     public void reloadDcsOptions() throws Exception {
         // 加载保存的游戏lua配置
         loadDcsSavedLuaOptions();
@@ -187,6 +235,7 @@ public class MainForm {
 
     public MainForm(Wini cfg) throws Exception {
         this.cfg = cfg;
+        loadDcsVersionCode();
         // 显示页
         if (getPathDcsSavedGame() != null) {
             reloadDcsOptions();
@@ -257,6 +306,8 @@ public class MainForm {
             }
         });
         // dcs 启动
+        String text = "<html><body>启动DCS <span style=\"color:#999999\">("+this.dcsVersionCode+")</span></body></html>";
+        btnStartDCS.setText(text);
         btnStartDCS.addActionListener(actionEvent -> {
             boolean saveSuccess = saveDCSOptionsLua();
             if (saveSuccess) {
